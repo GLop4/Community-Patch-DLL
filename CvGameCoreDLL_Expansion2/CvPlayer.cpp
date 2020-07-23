@@ -38138,7 +38138,7 @@ int CvPlayer::getNumResourceTotal(ResourceTypes eIndex, bool bIncludeImport) con
 
 	if(bIncludeImport)
 	{
-		iTotalNumResource += getResourceFromCSAlliances(eIndex);
+		//iTotalNumResource += getResourceFromCSAlliances(eIndex);
 		iTotalNumResource += getResourceFromMinors(eIndex);
 		iTotalNumResource += getResourceImportFromMajor(eIndex);
 		iTotalNumResource += getResourceSiphoned(eIndex);
@@ -38532,7 +38532,7 @@ void CvPlayer::CheckForMonopoly(ResourceTypes eResource)
 				if (IsCSResourcesCountMonopolies())
 				{
 					iOwnedNumResource += getResourceFromMinors(eResource);
-					iOwnedNumResource += getResourceFromCSAlliances(eResource);
+					//iOwnedNumResource += getResourceFromCSAlliances(eResource);
 				}
 
 				if (GetPlayerTraits()->IsImportsCountTowardsMonopolies())
@@ -38749,7 +38749,7 @@ int CvPlayer::GetMonopolyPercent(ResourceTypes eResource) const
 	if (IsCSResourcesCountMonopolies())
 	{
 		iOwnedNumResource += getResourceFromMinors(eResource);
-		iOwnedNumResource += getResourceFromCSAlliances(eResource);
+		//iOwnedNumResource += getResourceFromCSAlliances(eResource);
 	}
 
 	if (GetPlayerTraits()->IsImportsCountTowardsMonopolies())
