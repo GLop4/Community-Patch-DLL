@@ -4532,7 +4532,7 @@ void CvDiplomacyAI::SetDoFAccepted(PlayerTypes ePlayer, bool bValue)
 
 	if (bValue != IsDoFAccepted(ePlayer))
 	{
-		m_pabDoFAccepted[ePlayer] = bValue;
+		m_pabDoFAccepted[(int)ePlayer] = bValue;
 		m_pPlayer->recomputeGreatPeopleModifiers();
 
 		if (bValue)
@@ -4796,7 +4796,7 @@ int CvDiplomacyAI::GetDemandMadeTurn(PlayerTypes ePlayer) const
 void CvDiplomacyAI::SetDemandMadeTurn(PlayerTypes ePlayer, int iValue)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return;
-	m_paiDemandMadeTurn[(int)ePlayer] = iValue;
+	m_paiDemandMadeTurn[(int)ePlayer] = max(SHRT_MIN, min(SHRT_MAX, iValue));
 }
 
 /// How many turns has it been since ePlayer last made a demand of us?
@@ -4810,7 +4810,7 @@ short CvDiplomacyAI::GetDemandCounter(PlayerTypes ePlayer) const
 void CvDiplomacyAI::SetDemandCounter(PlayerTypes ePlayer, int iValue)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return;
-	m_paiDemandCounter[(int)ePlayer] = iValue;
+	m_paiDemandCounter[(int)ePlayer] = max(SHRT_MIN, min(SHRT_MAX, iValue));
 }
 
 /// Changes how many turns it has been since ePlayer last made a demand of us
@@ -5077,7 +5077,7 @@ int CvDiplomacyAI::GetNumTimesCoopWarDenied(PlayerTypes ePlayer) const
 void CvDiplomacyAI::SetNumTimesCoopWarDenied(PlayerTypes ePlayer, int iValue)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return;
-	m_paiNumTimesCoopWarDenied[(int)ePlayer] = iValue;
+	m_paiNumTimesCoopWarDenied[(int)ePlayer] = max(SHRT_MIN, min(SHRT_MAX, iValue));
 }
 
 /// Changes how many times ePlayer has denied our requests to start a coop war against another player
@@ -5137,7 +5137,7 @@ int CvDiplomacyAI::GetPlayerNumTurnsAtWar(PlayerTypes ePlayer) const
 void CvDiplomacyAI::SetPlayerNumTurnsAtWar(PlayerTypes ePlayer, int iValue)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
-	m_paiPlayerNumTurnsAtWar[(int)ePlayer] = max(iValue, 0);
+	m_paiPlayerNumTurnsAtWar[(int)ePlayer] = max(0, min(SHRT_MAX, iValue));
 }
 
 /// Sets how many turns we've been at war with this player
@@ -5241,11 +5241,11 @@ int CvDiplomacyAI::GetNumCitiesCapturedBy(PlayerTypes ePlayer) const
 	return (int) m_paiNumCitiesCaptured[(int)ePlayer];
 }
 
-/// Sets how many times this player has razed one of our cities
+/// Sets how many times this player has captured one of our cities
 void CvDiplomacyAI::SetNumCitiesCapturedBy(PlayerTypes ePlayer, int iValue)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
-	m_paiNumCitiesCaptured[(int)ePlayer] = max(iValue, 0);
+	m_paiNumCitiesCaptured[(int)ePlayer] = max(0, min(SHRT_MAX, iValue));
 }
 
 /// Changes how many times this player has captured one of our cities
@@ -5256,14 +5256,14 @@ void CvDiplomacyAI::ChangeNumCitiesCapturedBy(PlayerTypes ePlayer, int iChange)
 
 //	-----------------------------------------------------------------------------------------------
 
-// What is the value of stuff (Units & Cities) that we've lost in a war against a particular player?
+/// What is the value of stuff (Units & Cities) that we've lost in a war against a particular player?
 int CvDiplomacyAI::GetWarValueLost(PlayerTypes ePlayer) const
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return 0;
 	return (int) m_paiWarValueLost[(int)ePlayer];
 }
 
-// Sets the value of stuff (Units & Cities) that we've lost in a war against a particular player
+/// Sets the value of stuff (Units & Cities) that we've lost in a war against a particular player
 void CvDiplomacyAI::SetWarValueLost(PlayerTypes ePlayer, int iValue)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
@@ -5274,7 +5274,7 @@ void CvDiplomacyAI::SetWarValueLost(PlayerTypes ePlayer, int iValue)
 		m_paeWarDamageLevel[(int)ePlayer] = WAR_DAMAGE_LEVEL_NONE;
 }
 
-// Changes the value of stuff (Units & Cities) that we've lost in a war against a particular player
+/// Changes the value of stuff (Units & Cities) that we've lost in a war against a particular player
 void CvDiplomacyAI::ChangeWarValueLost(PlayerTypes ePlayer, int iChange)
 {
 	SetWarValueLost(ePlayer, GetWarValueLost(ePlayer) + iChange);
@@ -5322,14 +5322,14 @@ void CvDiplomacyAI::SetWarDamageValue(PlayerTypes ePlayer, int iValue)
 /// What level of damage have we taken in a war against a particular player?
 WarDamageLevelTypes CvDiplomacyAI::GetWarDamageLevel(PlayerTypes ePlayer) const
 {
-	if ((int)ePlayer < 0 || (int) ePlayer >= MAX_CIV_PLAYERS) return NO_WAR_DAMAGE_LEVEL_VALUE;
+	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return NO_WAR_DAMAGE_LEVEL_VALUE;
 	return (WarDamageLevelTypes) m_paeWarDamageLevel[(int)ePlayer];
 }
 
 /// Sets what level of damage we have taken in a war against a particular player
 void CvDiplomacyAI::SetWarDamageLevel(PlayerTypes ePlayer, WarDamageLevelTypes eDamageLevel)
 {
-	if ((int)ePlayer < 0 || (int) ePlayer >= MAX_CIV_PLAYERS) return;
+	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
 	if ((int)eDamageLevel < 0 || (int)eDamageLevel >= NUM_WAR_DAMAGE_LEVEL_TYPES) return;
 	m_paeWarDamageLevel[(int)ePlayer] = eDamageLevel;
 }
@@ -5459,7 +5459,7 @@ PeaceTreatyTypes CvDiplomacyAI::GetTreatyWillingToOffer(PlayerTypes ePlayer) con
 void CvDiplomacyAI::SetTreatyWillingToOffer(PlayerTypes ePlayer, PeaceTreatyTypes eTreaty)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return;
-	if ((int)eTreaty < NO_PEACE_TREATY_TYPE || (int)ePlayer >= NUM_PEACE_TREATY_TYPES) return;
+	if ((int)eTreaty < NO_PEACE_TREATY_TYPE || (int)eTreaty >= NUM_PEACE_TREATY_TYPES) return;
 	m_paePeaceTreatyWillingToOffer[(int)ePlayer] = eTreaty;
 }
 
@@ -5481,7 +5481,7 @@ PeaceTreatyTypes CvDiplomacyAI::GetTreatyWillingToAccept(PlayerTypes ePlayer) co
 void CvDiplomacyAI::SetTreatyWillingToAccept(PlayerTypes ePlayer, PeaceTreatyTypes eTreaty)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return;
-	if ((int)eTreaty < NO_PEACE_TREATY_TYPE || (int)ePlayer >= NUM_PEACE_TREATY_TYPES) return;
+	if ((int)eTreaty < NO_PEACE_TREATY_TYPE || (int)eTreaty >= NUM_PEACE_TREATY_TYPES) return;
 	m_paePeaceTreatyWillingToAccept[(int)ePlayer] = eTreaty;
 }
 
@@ -8217,7 +8217,7 @@ void CvDiplomacyAI::ChangeNumTimesNuked(PlayerTypes ePlayer, int iChange)
 bool CvDiplomacyAI::WasResurrectedBy(PlayerTypes ePlayer) const
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return false;
-	return (int)m_paiResurrectedOnTurn[(int)ePlayer] != -1;
+	return m_paiResurrectedOnTurn[(int)ePlayer] != -1;
 }
 
 /// Did any player bring us back to life?
@@ -8245,7 +8245,7 @@ void CvDiplomacyAI::SetResurrectedBy(PlayerTypes ePlayer, bool bValue)
 bool CvDiplomacyAI::WasResurrectedThisTurnBy(PlayerTypes ePlayer) const
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return false;
-	return (int)m_paiResurrectedOnTurn[(int)ePlayer] == GC.getGame().getGameTurn();
+	return m_paiResurrectedOnTurn[(int)ePlayer] == GC.getGame().getGameTurn();
 }
 
 //	-----------------------------------------------------------------------------------------------
@@ -8708,7 +8708,7 @@ void CvDiplomacyAI::SetOpinionTowardsUsGuess(PlayerTypes ePlayer, MajorCivOpinio
 /// Returns ePlayer's visible Diplomatic Approach towards us
 MajorCivApproachTypes CvDiplomacyAI::GetVisibleApproachTowardsUs(PlayerTypes ePlayer) const
 {
-	if (ePlayer < 0 || ePlayer >= MAX_MAJOR_CIVS) return NO_MAJOR_CIV_APPROACH;
+	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return NO_MAJOR_CIV_APPROACH;
 
 	if (IsAtWar(ePlayer))
 	{
@@ -8914,6 +8914,7 @@ WarDamageLevelTypes CvDiplomacyAI::GetOtherPlayerWarDamageLevel(PlayerTypes ePla
 /// Sets how much damage we think players we know have suffered in war against other players
 void CvDiplomacyAI::SetOtherPlayerWarDamageLevel(PlayerTypes ePlayer, PlayerTypes eLostToPlayer, WarDamageLevelTypes eDamageLevel)
 {
+	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
 	if ((int)eLostToPlayer < 0 || (int)eLostToPlayer >= MAX_CIV_PLAYERS) return;
 	if ((int)eDamageLevel < 0 || (int)eDamageLevel >= NUM_WAR_DAMAGE_LEVEL_TYPES) return;
 	m_ppaaeOtherPlayerWarDamageLevel[(int)ePlayer][(int)eLostToPlayer] = eDamageLevel;
@@ -8925,14 +8926,14 @@ void CvDiplomacyAI::SetOtherPlayerWarDamageLevel(PlayerTypes ePlayer, PlayerType
 ThreatTypes CvDiplomacyAI::GetEstimateOtherPlayerMilitaryThreat(PlayerTypes ePlayer, PlayerTypes eOtherPlayer) const
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return NO_THREAT_VALUE;
-	if ((int)eOtherPlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return NO_THREAT_VALUE;
+	if ((int)eOtherPlayer < 0 || (int)eOtherPlayer >= MAX_CIV_PLAYERS) return NO_THREAT_VALUE;
 	return (ThreatTypes) m_ppaaeOtherPlayerMilitaryThreat[(int)ePlayer][(int)eOtherPlayer];
 }
 
 void CvDiplomacyAI::SetEstimateOtherPlayerMilitaryThreat(PlayerTypes ePlayer, PlayerTypes eOtherPlayer, ThreatTypes eThreatType)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
-	if ((int)eOtherPlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
+	if ((int)eOtherPlayer < 0 || (int)eOtherPlayer >= MAX_CIV_PLAYERS) return;
 	if ((int)eThreatType < 0 || (int)eThreatType >= NUM_THREAT_VALUES) return;
 	m_ppaaeOtherPlayerMilitaryThreat[(int)ePlayer][(int)eOtherPlayer] = eThreatType;
 }
@@ -8943,7 +8944,7 @@ void CvDiplomacyAI::SetEstimateOtherPlayerMilitaryThreat(PlayerTypes ePlayer, Pl
 DisputeLevelTypes CvDiplomacyAI::GetEstimateOtherPlayerLandDisputeLevel(PlayerTypes ePlayer, PlayerTypes eOtherPlayer) const
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return NO_DISPUTE_LEVEL;
-	if ((int)eOtherPlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return NO_DISPUTE_LEVEL;
+	if ((int)eOtherPlayer < 0 || (int)eOtherPlayer >= MAX_CIV_PLAYERS) return NO_DISPUTE_LEVEL;
 	return (DisputeLevelTypes) m_ppaaeOtherPlayerLandDisputeLevel[(int)ePlayer][(int)eOtherPlayer];
 }
 
@@ -8951,7 +8952,7 @@ DisputeLevelTypes CvDiplomacyAI::GetEstimateOtherPlayerLandDisputeLevel(PlayerTy
 void CvDiplomacyAI::SetEstimateOtherPlayerLandDisputeLevel(PlayerTypes ePlayer, PlayerTypes eOtherPlayer, DisputeLevelTypes eDisputeLevel)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return;
-	if ((int)eOtherPlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
+	if ((int)eOtherPlayer < 0 || (int)eOtherPlayer >= MAX_CIV_PLAYERS) return;
 	if ((int)eDisputeLevel < 0 || (int)eDisputeLevel >= NUM_DISPUTE_LEVELS) return;
 	m_ppaaeOtherPlayerLandDisputeLevel[(int)ePlayer][(int)eOtherPlayer] = eDisputeLevel;
 }
@@ -8962,7 +8963,7 @@ void CvDiplomacyAI::SetEstimateOtherPlayerLandDisputeLevel(PlayerTypes ePlayer, 
 DisputeLevelTypes CvDiplomacyAI::GetEstimateOtherPlayerVictoryDisputeLevel(PlayerTypes ePlayer, PlayerTypes eOtherPlayer) const
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return NO_DISPUTE_LEVEL;
-	if ((int)eOtherPlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return NO_DISPUTE_LEVEL;
+	if ((int)eOtherPlayer < 0 || (int)eOtherPlayer >= MAX_CIV_PLAYERS) return NO_DISPUTE_LEVEL;
 	return (DisputeLevelTypes) m_ppaaeOtherPlayerVictoryDisputeLevel[(int)ePlayer][(int)eOtherPlayer];
 }
 
@@ -8970,7 +8971,7 @@ DisputeLevelTypes CvDiplomacyAI::GetEstimateOtherPlayerVictoryDisputeLevel(Playe
 void CvDiplomacyAI::SetEstimateOtherPlayerVictoryDisputeLevel(PlayerTypes ePlayer, PlayerTypes eOtherPlayer, DisputeLevelTypes eDisputeLevel)
 {
 	if ((int)ePlayer < 0 || (int)ePlayer >= MAX_MAJOR_CIVS) return;
-	if ((int)eOtherPlayer < 0 || (int)ePlayer >= MAX_CIV_PLAYERS) return;
+	if ((int)eOtherPlayer < 0 || (int)eOtherPlayer >= MAX_CIV_PLAYERS) return;
 	if ((int)eDisputeLevel < 0 || (int)eDisputeLevel >= NUM_DISPUTE_LEVELS) return;
 	m_ppaaeOtherPlayerVictoryDisputeLevel[(int)ePlayer][(int)eOtherPlayer] = eDisputeLevel;
 }
@@ -9542,20 +9543,6 @@ void CvDiplomacyAI::DoTurn(DiplomacyPlayerType eTargetPlayer)
 	DoEstimateOtherPlayerOpinions();
 	DoEstimateOtherPlayerApproaches();
 	LogOtherPlayerGuessStatus();
-	
-	/*
-	if (!GetPlayer()->isHuman())
-	{
-		DoSendAIAggressiveMilitaryWarnings(); // tell other AIs to move their troops (may trigger war)
-		DoSendAIPromiseRequests(); // tell other AIs to stop doing things we don't like
-#if defined(MOD_DIPLOMACY_CIV4_FEATURES)
-		if (MOD_DIPLOMACY_CIV4_FEATURES)
-		{
-			DoSendAIRevokeVassalageStatement(); // tell our AI master we want independence, if we can and we want it
-		}
-#endif
-	}
-	*/
 
 	// Player Opinion & Approach
 	vector<PlayerTypes> v;
